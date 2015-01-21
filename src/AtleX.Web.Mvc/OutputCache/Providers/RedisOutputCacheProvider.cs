@@ -10,8 +10,19 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
 {
     public class RedisOutputCacheProvider : OutputCacheProvider
     {
+        private static ConnectionMultiplexer _redis;
+
+        private readonly object _lock = new object();
+
         public RedisOutputCacheProvider()
         {
+            lock(_lock)
+            {
+                if (_redis == null)
+                {
+                    _redis = ConnectionMultiplexer.Connect("");
+                }
+            }
         }
 
         public override object Add(string key, object entry, DateTime utcExpiry)
