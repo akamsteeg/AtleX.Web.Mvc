@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
-using System.Web.Caching;
-using StackExchange.Redis;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
+﻿using StackExchange.Redis;
+using System;
 using System.Collections.Specialized;
+using System.Configuration;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Web.Caching;
 
 namespace AtleX.Web.Mvc.OutputCache.Providers
 {
@@ -155,7 +151,7 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
 
         private static string CreateStoreKey(string key)
         {
-            return  _keyPrefix + key;
+            return _keyPrefix + key;
         }
     }
 }
