@@ -8,13 +8,20 @@ using System.Web.Caching;
 using StackExchange.Redis;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Collections.Specialized;
 
 namespace AtleX.Web.Mvc.OutputCache.Providers
 {
     public class RedisOutputCacheProvider : OutputCacheProvider
     {
+        /// <summary>
+        /// The connection multiplexer is stored per the recommendations
+        /// from Stack Exchange:
+        /// 
+        /// "Because the ConnectionMultiplexer does a lot, it is designed to be 
+        /// shared and reused between callers"
+        /// </summary>
         private static ConnectionMultiplexer _redis;
-
         private static int _databaseNumber;
         private static string _keyPrefix;
 
@@ -24,7 +31,7 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
         {
         }
 
-        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        public override void Initialize(string name, NameValueCollection config)
         {
             lock (_lock)
             {
@@ -35,8 +42,10 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
 
                 if (_redis == null)
                 {
-                    if (config["host"] == null || string.IsNullOrEmpty(config["host"]))
-                        throw new ConfigurationErrorsException("No Redis host specified");
+                    if (config["connectionStringReference"] == null || string.IsNullOrEmpty(config["connectionStringReference"]))
+                        throw new ConfigurationErrorsException("No connectionStringReference specified");
+                    if (ConfigurationManager.ConnectionStrings[config["connectionStringReference"]] == null)
+                        throw new ConfigurationErrorsException(string.Format("No connection string with name '{0}' found", config["connectionStringReference"]));
                     if (config["databaseNumber"] == null || string.IsNullOrEmpty(config["host"]))
                         throw new ConfigurationErrorsException("No database number specified");
                     if (!int.TryParse(config["databaseNumber"], out _databaseNumber))
@@ -44,13 +53,21 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
 
                     _keyPrefix = config["keyPrefix"] ?? "";
 
-                    _redis = ConnectionMultiplexer.Connect(config["host"]);
+                    string connectionString = ConfigurationManager.ConnectionStrings[config["connectionStringReference"]].ConnectionString;
+                    _redis = ConnectionMultiplexer.Connect(connectionString);
 
                     base.Initialize(name, config);
                 }
             }
         }
 
+        /// <summary>
+        /// Add a new object to the cache
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="entry"></param>
+        /// <param name="utcExpiry"></param>
+        /// <returns>The added object</returns>
         public override object Add(string key, object entry, DateTime utcExpiry)
         {
             this.Set(key, entry, utcExpiry);
@@ -58,6 +75,11 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
             return entry;
         }
 
+        /// <summary>
+        /// Retrieve an object from the cache
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>The requested object, or null if it does not exist in the cache</returns>
         public override object Get(string key)
         {
             IDatabase redisDb = _redis.GetDatabase(_databaseNumber);
@@ -73,12 +95,22 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
             return result;
         }
 
+        /// <summary>
+        /// Remove an object from the cache
+        /// </summary>
+        /// <param name="key"></param>
         public override void Remove(string key)
         {
             IDatabase redisDb = _redis.GetDatabase(_databaseNumber);
             redisDb.KeyDelete(CreateStoreKey(key));
         }
 
+        /// <summary>
+        /// Add a new object to the cache
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="entry"></param>
+        /// <param name="utcExpiry"></param>
         public override void Set(string key, object entry, DateTime utcExpiry)
         {
             byte[] serializedItem = this.SerializeItem(entry);
@@ -87,6 +119,12 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
             redisDb.StringSet(CreateStoreKey(key), serializedItem, utcExpiry.Subtract(DateTime.UtcNow));
         }
 
+        /// <summary>
+        /// Serialize an object to store so it can be
+        /// saved into the Redis cache
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         protected virtual byte[] SerializeItem(object item)
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -98,6 +136,11 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
             }
         }
 
+        /// <summary>
+        /// Deserialize an object retrieved from the cache
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
         protected virtual object DeserializeItem(byte[] bytes)
         {
             BinaryFormatter bf = new BinaryFormatter();
