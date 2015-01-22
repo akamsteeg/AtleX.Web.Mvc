@@ -35,21 +35,22 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
         {
             lock (_lock)
             {
-                if (string.IsNullOrEmpty(name))
-                {
-                    name = this.GetType().FullName;
-                }
-
                 if (_redis == null)
                 {
                     if (config["connectionStringReference"] == null || string.IsNullOrEmpty(config["connectionStringReference"]))
                         throw new ConfigurationErrorsException("No connectionStringReference specified");
                     if (ConfigurationManager.ConnectionStrings[config["connectionStringReference"]] == null)
                         throw new ConfigurationErrorsException(string.Format("No connection string with name '{0}' found", config["connectionStringReference"]));
-                    if (config["databaseNumber"] == null || string.IsNullOrEmpty(config["host"]))
-                        throw new ConfigurationErrorsException("No database number specified");
-                    if (!int.TryParse(config["databaseNumber"], out _databaseNumber))
-                        throw new ConfigurationErrorsException("Database number must be an integer");
+
+                    if (config["databaseNumber"] == null || !int.TryParse(config["databaseNumber"], out _databaseNumber))
+                    {
+                        _databaseNumber = 0;
+                    }
+
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        name = this.GetType().FullName;
+                    }
 
                     _keyPrefix = config["keyPrefix"] ?? "";
 
