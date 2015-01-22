@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AtleX.Web.Mvc.Tests.OutputCache.Providers
@@ -53,6 +54,40 @@ namespace AtleX.Web.Mvc.Tests.OutputCache.Providers
             object retrievedValue = _redisProvider.Get(data.ToString("N"));
 
             // Assert
+            Assert.IsNull(retrievedValue);
+        }
+
+        [Test]
+        public void StoreOneItemAndRemoveIt()
+        {
+            // Arrange
+            Guid data = Guid.NewGuid();
+
+            // Act
+            _redisProvider.Set(data.ToString("N"), data, DateTime.UtcNow.AddMinutes(5));
+            _redisProvider.Remove(data.ToString("N"));
+
+            // Assert
+            object retrievedValue = _redisProvider.Get(data.ToString("N"));
+
+            Assert.IsNull(retrievedValue);
+        }
+
+        [Test]
+        public void StoreItemWithExpiryRetrieveItWhenExpired()
+        {
+            // Arrange
+            Guid data = Guid.NewGuid();
+
+            int expireIn = 1; // seconds
+
+            // Act
+            _redisProvider.Set(data.ToString("N"), data, DateTime.UtcNow.AddSeconds(expireIn));
+            Thread.Sleep(2 * 2 * 1000); // Check in 2 * the expiration time
+
+            // Assert
+            object retrievedValue = _redisProvider.Get(data.ToString("N"));
+
             Assert.IsNull(retrievedValue);
         }
     }
