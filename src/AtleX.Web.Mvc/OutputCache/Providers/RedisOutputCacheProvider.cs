@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 using System.Web.Caching;
 using StackExchange.Redis;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace AtleX.Web.Mvc.OutputCache.Providers
 {
@@ -12,37 +15,103 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
     {
         private static ConnectionMultiplexer _redis;
 
-        private readonly object _lock = new object();
+        private static int _databaseNumber;
+        private static string _keyPrefix;
+
+        private static readonly object _lock = new object();
 
         public RedisOutputCacheProvider()
         {
-            lock(_lock)
+        }
+
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        {
+            lock (_lock)
             {
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = this.GetType().FullName;
+                }
+
                 if (_redis == null)
                 {
-                    _redis = ConnectionMultiplexer.Connect("");
+                    if (config["host"] == null || string.IsNullOrEmpty(config["host"]))
+                        throw new ConfigurationErrorsException("No Redis host specified");
+                    if (config["databaseNumber"] == null || string.IsNullOrEmpty(config["host"]))
+                        throw new ConfigurationErrorsException("No database number specified");
+                    if (!int.TryParse(config["databaseNumber"], out _databaseNumber))
+                        throw new ConfigurationErrorsException("Database number must be an integer");
+
+                    _keyPrefix = config["keyPrefix"] ?? "MvcRedisOutputCache";
+
+                    _redis = ConnectionMultiplexer.Connect(config["host"]);
+
+                    base.Initialize(name, config);
                 }
             }
         }
 
         public override object Add(string key, object entry, DateTime utcExpiry)
         {
-            throw new NotImplementedException();
+            this.Set(key, entry, utcExpiry);
+
+            return entry;
         }
 
         public override object Get(string key)
         {
-            throw new NotImplementedException();
+            IDatabase redisDb = _redis.GetDatabase(_databaseNumber);
+
+            RedisValue storedItem = redisDb.StringGet(CreateStoreKey(key));
+
+            object result = null;
+            if (!storedItem.IsNull)
+            {
+                result = this.DeserializeItem(storedItem);
+            }
+
+            return result;
         }
 
         public override void Remove(string key)
         {
-            throw new NotImplementedException();
+            IDatabase redisDb = _redis.GetDatabase(_databaseNumber);
+            redisDb.KeyDelete(CreateStoreKey(key));
         }
 
         public override void Set(string key, object entry, DateTime utcExpiry)
         {
-            throw new NotImplementedException();
+            byte[] serializedItem = this.SerializeItem(entry);
+
+            IDatabase redisDb = _redis.GetDatabase(_databaseNumber);
+            redisDb.StringSet(CreateStoreKey(key), serializedItem, utcExpiry.Subtract(DateTime.UtcNow));
+        }
+
+        protected virtual byte[] SerializeItem(object item)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream stream = new MemoryStream())
+            {
+                bf.Serialize(stream, item);
+
+                return stream.ToArray();
+            }
+        }
+
+        protected virtual object DeserializeItem(byte[] bytes)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream stream = new MemoryStream(bytes))
+            {
+                object result = bf.Deserialize(stream);
+
+                return result;
+            }
+        }
+
+        private static string CreateStoreKey(string key)
+        {
+            return string.Format("{0}_{1})", _keyPrefix, key);
         }
     }
 }
