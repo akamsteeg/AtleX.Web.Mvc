@@ -42,7 +42,7 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
                     if (!int.TryParse(config["databaseNumber"], out _databaseNumber))
                         throw new ConfigurationErrorsException("Database number must be an integer");
 
-                    _keyPrefix = config["keyPrefix"] ?? "MvcRedisOutputCache";
+                    _keyPrefix = config["keyPrefix"] ?? "";
 
                     _redis = ConnectionMultiplexer.Connect(config["host"]);
 
@@ -111,7 +111,7 @@ namespace AtleX.Web.Mvc.OutputCache.Providers
 
         private static string CreateStoreKey(string key)
         {
-            return string.Format("{0}_{1})", _keyPrefix, key);
+            return  _keyPrefix + key;
         }
     }
 }
