@@ -73,6 +73,28 @@ namespace AtleX.Web.Mvc.Tests.OutputCache.Providers
             Assert.IsNull(retrievedValue);
         }
 
+        [Test,
+        Sequential]
+        public void StoreManyItemsAndRetrieveThem([Values(10, 100, 1000, 10000, 100000)] int amount)
+        {
+            // Arrange
+
+            // Act
+            for (int i = 0; i < amount; i++)
+            {
+                _redisProvider.Set(i.ToString(), i, DateTime.UtcNow.AddMinutes(5)); 
+            }
+
+            // Assert
+            for (int i = 0; i < amount; i++)
+            {
+                object retrievedValue = _redisProvider.Get(i.ToString());
+                
+                Assert.IsNotNull(retrievedValue);
+                Assert.AreEqual(i, (int)retrievedValue);
+            }
+        }
+
         [Test]
         public void StoreItemWithExpiryRetrieveItWhenExpired()
         {
