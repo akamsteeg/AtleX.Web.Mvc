@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace AtleX.Web.Mvc.ActionResult
 {
@@ -14,9 +15,8 @@ namespace AtleX.Web.Mvc.ActionResult
         }
 
         public TemporaryRedirect(string location)
+            : base(location, false)
         {
-            this.location = location;
-            this.httpStatusCode = 302;
         }
     }
 }

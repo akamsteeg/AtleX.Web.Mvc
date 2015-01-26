@@ -12,7 +12,7 @@ namespace AtleX.Web.Mvc
     {
         /// <summary>
         /// Does a HTTP/301 Redirect Permanently without
-        /// output HTML
+        /// HTML output
         /// </summary>
         /// <param name="location">The URL to redirect to</param>
         /// <returns></returns>
@@ -23,7 +23,7 @@ namespace AtleX.Web.Mvc
 
         /// <summary>
         /// Does a HTTP/301 Redirect Permanently without
-        /// output HTML
+        /// HTML output
         /// </summary>
         /// <param name="location">The URL to redirect to</param>
         /// <returns></returns>
@@ -34,7 +34,7 @@ namespace AtleX.Web.Mvc
 
         /// <summary>
         /// Does a HTTP/302 Temporary Redirect without
-        /// output HTML
+        /// HTML output
         /// </summary>
         /// <param name="location">The URL to redirect to</param>
         /// <returns></returns>
@@ -45,7 +45,7 @@ namespace AtleX.Web.Mvc
 
         /// <summary>
         /// Does a HTTP/302 Temporary Redirect without
-        /// output HTML
+        /// HTML output
         /// </summary>
         /// <param name="location">The URL to redirect to</param>
         /// <returns></returns>

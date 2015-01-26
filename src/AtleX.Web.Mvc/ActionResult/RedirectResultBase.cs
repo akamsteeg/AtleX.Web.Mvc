@@ -4,20 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 
 namespace AtleX.Web.Mvc.ActionResult
 {
-    public abstract class RedirectResultBase : System.Web.Mvc.ActionResult
+    public abstract class RedirectResultBase : RedirectResult
     {
-        protected int httpStatusCode;
-        protected string location;
+        public RedirectResultBase(string url, bool permanent)
+            : base(url, permanent)
+        {
+        }
 
-        public override void ExecuteResult(System.Web.Mvc.ControllerContext context)
+        public override void ExecuteResult(ControllerContext context)
         {
             HttpResponseBase response = context.HttpContext.Response;
 
-            response.StatusCode = httpStatusCode;
-            response.Headers.Add("Location", location);
+            response.StatusCode = (this.Permanent) ? 301 : 302;
+            response.Headers.Add("Location", this.Url);
         }
     }
 }
