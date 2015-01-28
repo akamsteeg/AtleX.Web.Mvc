@@ -47,9 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionResult\PermanentRedirect.cs" />
-    <Compile Include="ActionResult\RedirectResultBase.cs" />
-    <Compile Include="ActionResult\TemporaryRedirect.cs" />
+    <Compile Include="ActionResults\PermanentRedirect.cs" />
+    <Compile Include="ActionResults\RedirectResultBase.cs" />
+    <Compile Include="ActionResults\TemporaryRedirect.cs" />
     <Compile Include="ControllerExtensions.cs" />
     <Compile Include="OutputCache\Providers\RedisOutputCacheProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

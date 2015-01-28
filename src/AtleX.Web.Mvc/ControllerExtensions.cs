@@ -1,4 +1,4 @@
-﻿using AtleX.Web.Mvc.ActionResult;
+﻿using AtleX.Web.Mvc.ActionResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace AtleX.Web.Mvc
         /// </summary>
         /// <param name="location">The URL to redirect to</param>
         /// <returns></returns>
-        public static System.Web.Mvc.ActionResult HttpRedirectPermanent(this Controller controller, string location)
+        public static ActionResult HttpRedirectPermanent(this Controller controller, string location)
         {
             return new PermanentRedirect(location);
         }
@@ -27,7 +27,7 @@ namespace AtleX.Web.Mvc
         /// </summary>
         /// <param name="location">The URL to redirect to</param>
         /// <returns></returns>
-        public static System.Web.Mvc.ActionResult HttpRedirectPermanent(this Controller controller, Uri location)
+        public static ActionResult HttpRedirectPermanent(this Controller controller, Uri location)
         {
             return controller.HttpRedirectPermanent(location);
         }
@@ -38,7 +38,7 @@ namespace AtleX.Web.Mvc
         /// </summary>
         /// <param name="location">The URL to redirect to</param>
         /// <returns></returns>
-        public static System.Web.Mvc.ActionResult HttpRedirectTemporary(this Controller controller, string location)
+        public static ActionResult HttpRedirectTemporary(this Controller controller, string location)
         {
             return new PermanentRedirect(location);
         }
@@ -49,7 +49,7 @@ namespace AtleX.Web.Mvc
         /// </summary>
         /// <param name="location">The URL to redirect to</param>
         /// <returns></returns>
-        public static System.Web.Mvc.ActionResult HttpRedirectTemporary(this Controller controller, Uri location)
+        public static ActionResult HttpRedirectTemporary(this Controller controller, Uri location)
         {
             return controller.HttpRedirectTemporary(location);
         }

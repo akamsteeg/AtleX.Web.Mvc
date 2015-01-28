@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace AtleX.Web.Mvc.ActionResult
+namespace AtleX.Web.Mvc.ActionResults
 {
     public class TemporaryRedirect : RedirectResultBase
     {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace AtleX.Web.Mvc.ActionResult
+namespace AtleX.Web.Mvc.ActionResults
 {
     public abstract class RedirectResultBase : RedirectResult
     {
