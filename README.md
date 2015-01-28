@@ -58,7 +58,7 @@ public void ToMyHomePage()
 
 ## Acknowledgements
 
-AtleX.Web.Mvc uses the awesome [StackExchange.Redis]{https://github.com/StackExchange/StackExchange.Redis/} library.
+AtleX.Web.Mvc uses the awesome [StackExchange.Redis](https://github.com/StackExchange/StackExchange.Redis/) library.
 
 ## License
 
