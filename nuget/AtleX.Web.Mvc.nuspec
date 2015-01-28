@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>AtleX.Web.Mvc</id>
+    <version>1.0.0-beta</version>
+    <title>AtleX.Web.Mvc</title>
+    <authors>Alex Kamsteeg</authors>
+    <owners>Alex Kamsteeg</owners>
+    <projectUrl>https://github.com/akamsteeg/AtleX.Web.Mvc</projectUrl>
+	<copyright>Copyright 2015</copyright>
+	<licenseUrl>https://github.com/akamsteeg/AtleX.Web.Mvc/blob/master/License.txt</licenseUrl>	
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>asp, asp.net, mvc, asp.net mvc, output cache, outputcache, redis</tags>
+    <dependencies>
+      <dependency id="StackExchange.Redis" version="1.0.394" />
+    </dependencies>
+    <summary>
+A small utility library with extensions to ASP.net MVC
+	</summary>
+	<description>
+A small utility library with extensions to ASP.net MVC
+
+See the project site for a complete list of functionality.
+	</description>
+    <releaseNotes>
+	</releaseNotes>
+  </metadata>
+  <files>
+    <file src="..\src\AtleX.Web.Mvc\bin\Release\AtleX.Web.Mvc.pdb" target="lib\net45\" />
+    <file src="..\src\AtleX.Web.Mvc\bin\Release\AtleX.Web.Mvc.dll" target="lib\net45\" />
+  </files>
+</package>
