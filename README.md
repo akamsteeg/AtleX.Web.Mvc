@@ -37,7 +37,8 @@ using AtleX.Web.Mvc;
 The methods can now be used in the action methods, for example:
 
 ```csharp
-public void ToMyHomePage()
+[HttpGet]
+public ActionResult ToMyHomePage()
 {
     return this.HttpRedirectTemporary("http://atlex.nl/");
 }
@@ -45,15 +46,27 @@ public void ToMyHomePage()
 
 ### Redis Output Cache provider
 
+Put the following in the `System.Web` section of the `Web.config` file:
+
 ```xml
 <caching> 
     <outputCache defaultProvider="RedisOutputCacheProvider"> 
         <providers> 
+            <clear />
             <add name="RedisOutputCacheProvider" 
-                type="AtleX.Web.Mvc.OutputCache.Providers.RedisOutputCacheProvider, AtleX.Web.Mvc" /> 
+                type="AtleX.Web.Mvc.OutputCache.Providers.RedisOutputCacheProvider, AtleX.Web.Mvc"
+                connectionStringReference="redisServer" /> 
         </providers> 
     </outputCache>
 </caching>
+```
+
+And add a connection string for your Redis server:
+
+```xml
+<connectionStrings>
+    <add name="redisServer" connectionString="127.0.0.1,password=..."/>
+</connectionStrings>
 ```
 
 ## Acknowledgements
