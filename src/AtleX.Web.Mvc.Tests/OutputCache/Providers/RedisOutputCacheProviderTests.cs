@@ -75,14 +75,15 @@ namespace AtleX.Web.Mvc.Tests.OutputCache.Providers
 
         [Test,
         Sequential]
-        public void StoreManyItemsAndRetrieveThem([Values(10, 100, 1000, 10000, 100000)] int amount)
+        public void StoreManyItemsAndRetrieveThem([Values(10, 100, 1000)] int amount)
         {
             // Arrange
+            DateTime expiry = DateTime.UtcNow.AddMinutes(10);
 
             // Act
             for (int i = 0; i < amount; i++)
             {
-                _redisProvider.Set(i.ToString(), i, DateTime.UtcNow.AddMinutes(5)); 
+                _redisProvider.Set(i.ToString(), i, expiry); 
             }
 
             // Assert
