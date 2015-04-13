@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>asp, asp.net, mvc, asp.net mvc, output cache, outputcache, redis</tags>
     <dependencies>
-      <dependency id="StackExchange.Redis" version="1.0.394" />
+      <dependency id="StackExchange.Redis" version="1.0.414" />
     </dependencies>
     <summary>
 A small utility library with extensions to ASP.net MVC
