@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AtleX.Web.Mvc.Tests.OutputCache.Providers
 {
-    [TestFixture]
+    [TestFixture, Explicit("No Redis server available by default")]
     class RedisOutputCacheProviderTests
     {
         private RedisOutputCacheProvider _redisProvider;
